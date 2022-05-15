@@ -6,18 +6,19 @@ root = Tk()
 root.title("Minesweeper")
 root.geometry("500x500")
 
-grid_dimensions = 3
+grid_dimensions = 4
 
 num_squares = grid_dimensions**2
 squares = []
 mines = num_squares // 8
+mines = 3
 for mine in range(mines):
     squares.append("x")
 while len(squares) < num_squares:
-    squares.append("0")
+    squares.append(0)
 
 random.shuffle(squares)
-print(squares)
+# print(squares)
 
 minefield = []
 for list_number in range(grid_dimensions):
@@ -41,7 +42,6 @@ for list_num in range(grid_dimensions):
     for list_index in range(grid_dimensions):
         if minefield[list_num][list_index] == "x":
             mine = minefield[list_num][list_index]
-
             if list_num == 0:
                 # If it's the top row, it's the first row.
                 # No need to check for an earlier list_num
@@ -51,9 +51,34 @@ for list_num in range(grid_dimensions):
                 # + 0 0 0 +
                 # +-------+
                 if minefield[list_num + 1][list_index] != "x":
-                    minefield[list_num + 1][list_index] = str(int(minefield[list_num + 1][list_index]) + 1)
+                    minefield[list_num + 1][list_index] += 1
+            elif list_num == len(minefield) - 1:
+                # If it's the bottom row, it's the last row.
+                # No need to check for a later list_num
+                # +-------+
+                # + 0 0 0 +
+                # + 1 0 0 +
+                # + x 1 0 +
+                # +-------+  <- avoid checking this row
+                if minefield[list_num - 1][list_index] != "x":
+                    minefield[list_num - 1][list_index] += 1
+            else:
+                if minefield[list_num - 1][list_index] != "x":
+                    minefield[list_num - 1][list_index] += 1
+                if minefield[list_num + 1][list_index] != "x":
+                    minefield[list_num + 1][list_index] += 1
+
             if list_index == 0:
-                pass
+                if minefield[list_num][list_index + 1] != "x":
+                    minefield[list_num][list_index + 1] += 1
+            elif list_index == len(minefield[list_num]) - 1:
+                if minefield[list_num][list_index - 1] != "x":
+                    minefield[list_num][list_index - 1] += 1
+            else:
+                if minefield[list_num][list_index - 1] != "x":
+                    minefield[list_num][list_index - 1] += 1
+                if minefield[list_num][list_index + 1] != "x":
+                    minefield[list_num][list_index + 1] += 1
 
 
 # x = 0
