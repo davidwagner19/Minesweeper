@@ -31,24 +31,42 @@ for list_number in range(grid_dimensions):
 print(minefield)
 
 # Assign numbers to the squares adjacent to mines
-for square in range(len(squares)):
-    if squares[square] == "x":
-        if squares[square - grid_dimensions] != "x":
-            squares[square - grid_dimensions] = str(int(squares[square - grid_dimensions]) + 1)
-            print(squares[square - grid_dimensions])
+# for square in range(len(squares)):
+#     if squares[square] == "x":
+#         if squares[square - grid_dimensions] != "x":
+#             squares[square - grid_dimensions] = str(int(squares[square - grid_dimensions]) + 1)
+#             print(squares[square - grid_dimensions])
+
+for list_num in range(grid_dimensions):
+    for list_index in range(grid_dimensions):
+        if minefield[list_num][list_index] == "x":
+            mine = minefield[list_num][list_index]
+
+            if list_num == 0:
+                # If it's the top row, it's the first row.
+                # No need to check for an earlier list_num
+                # +-------+  <- avoid checking this row
+                # + x 1 0 +
+                # + 1 0 0 +
+                # + 0 0 0 +
+                # +-------+
+                if minefield[list_num + 1][list_index] != "x":
+                    minefield[list_num + 1][list_index] = str(int(minefield[list_num + 1][list_index]) + 1)
+            if list_index == 0:
+                pass
 
 
 # x = 0
 # y = 0
 # current_square = 0
-# for i in range(grid_dimensions):
-#     for j in range(grid_dimensions):
-#         btn = Button(root, width=3, text=squares[current_square])
-#         btn.grid(row=x, column=y)
-#         current_square += 1
-#         y += 1
-#     y = 0
-#     x += 1
+for i in range(grid_dimensions):
+    for j in range(grid_dimensions):
+        current_square = minefield[i][j]
+        btn = Button(root, width=3, text=current_square)
+        btn.grid(row=i, column=j)
+    #     y += 1
+    # y = 0
+    # x += 1
 
 
 
