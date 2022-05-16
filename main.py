@@ -6,7 +6,7 @@ root = Tk()
 root.title("Minesweeper")
 root.geometry("500x500")
 
-grid_dimensions = 6
+grid_dimensions = 7
 
 num_squares = grid_dimensions**2
 squares = []
@@ -19,13 +19,26 @@ while len(squares) < num_squares:
 
 random.shuffle(squares)
 
+reveal_field = []
 minefield = []
-for list_number in range(grid_dimensions):
-    globals()[f"grid_line{list_number}"] = []
-    minefield.append(globals()[f"grid_line{list_number}"])
-    for square in range(grid_dimensions):
+# button_field = []
+for list_num in range(grid_dimensions):
+    # reveal field
+    globals()[f"hidden_grid_line{list_num}"] = []
+    reveal_field.append(globals()[f"hidden_grid_line{list_num}"])
+    # minefield
+    globals()[f"minefield_grid_line{list_num}"] = []
+    minefield.append(globals()[f"minefield_grid_line{list_num}"])
+
+    for list_index in range(grid_dimensions):
+        # reveal field
+        globals()[f"hidden_grid_line{list_num}"].append(False)
+        # minefield
         x = squares.pop()
-        globals()[f"grid_line{list_number}"].append(x)
+        globals()[f"minefield_grid_line{list_num}"].append(x)
+
+
+print(minefield)
 
 for list_num in range(grid_dimensions):
     for list_index in range(grid_dimensions):
@@ -55,8 +68,13 @@ for list_num in range(grid_dimensions):
                     minefield[list_num + 1][list_index - 1] += 1
                 # checks all other diagonal spots that are the next row down
                 else:
-                    if minefield[list_num + 1][list_index + 1] != "x":
-                        minefield[list_num + 1][list_index + 1] += 1
+                    try:
+                        if minefield[list_num + 1][list_index + 1] != "x":
+                            minefield[list_num + 1][list_index + 1] += 1
+                    except IndexError:
+                        print("outside the bounds of the grid")
+                    finally:
+                        pass
                     if minefield[list_num + 1][list_index - 1] != "x":
                         minefield[list_num + 1][list_index - 1] += 1
 
@@ -81,8 +99,13 @@ for list_num in range(grid_dimensions):
                     minefield[list_num - 1][list_index - 1] += 1
                 # checks all other diagonal spots that are the next row up
                 else:
-                    if minefield[list_num - 1][list_index + 1] != "x":
-                        minefield[list_num - 1][list_index + 1] += 1
+                    try:
+                        if minefield[list_num - 1][list_index + 1] != "x":
+                            minefield[list_num - 1][list_index + 1] += 1
+                    except IndexError:
+                        print("outside the bounds of the grid")
+                    finally:
+                        pass
                     if minefield[list_num - 1][list_index - 1] != "x":
                         minefield[list_num - 1][list_index - 1] += 1
 
@@ -101,8 +124,13 @@ for list_num in range(grid_dimensions):
                 elif list_index == len(minefield[list_num]) - 1 and minefield[list_num + 1][list_index - 1] != "x":
                     minefield[list_num + 1][list_index - 1] += 1
                 else:
-                    if minefield[list_num + 1][list_index + 1] != "x":
-                        minefield[list_num + 1][list_index + 1] += 1
+                    try:
+                        if minefield[list_num + 1][list_index + 1] != "x":
+                            minefield[list_num + 1][list_index + 1] += 1
+                    except IndexError:
+                        print("outside the bounds of the grid")
+                    finally:
+                        pass
                     if minefield[list_num + 1][list_index - 1] != "x":
                         minefield[list_num + 1][list_index - 1] += 1
 
@@ -112,8 +140,13 @@ for list_num in range(grid_dimensions):
                 elif list_index == len(minefield[list_num]) - 1 and minefield[list_num - 1][list_index - 1] != "x":
                     minefield[list_num - 1][list_index - 1] += 1
                 else:
-                    if minefield[list_num - 1][list_index + 1] != "x":
-                        minefield[list_num - 1][list_index + 1] += 1
+                    try:
+                        if minefield[list_num - 1][list_index + 1] != "x":
+                            minefield[list_num - 1][list_index + 1] += 1
+                    except IndexError:
+                        print("outside the bounds of the grid")
+                    finally:
+                        pass
                     if minefield[list_num - 1][list_index - 1] != "x":
                         minefield[list_num - 1][list_index - 1] += 1
 
@@ -133,10 +166,29 @@ for list_num in range(grid_dimensions):
                     minefield[list_num][list_index + 1] += 1
 
 
-for i in range(grid_dimensions):
-    for j in range(grid_dimensions):
-        current_square = minefield[i][j]
-        btn = Button(root, width=3, text=current_square)
-        btn.grid(row=i, column=j)
+def reveal(row, column):
+    """Reveal the hidden value of the space."""
+    global button_field
+    global minefield
 
+    # reveal_field[revealed_list_num][revealed_list_index] = True
+    # btn["text"] = "Clicked"
+    button_field[row][column]["text"] = str(minefield[row][column])
+
+
+# TODO
+# Need to find a way to re-reference the buttons after they've been placed onto the grid
+button_field = []
+for list_num in range(grid_dimensions):
+    # button field
+    globals()[f"button_grid_line{list_num}"] = []
+    button_field.append(globals()[f"button_grid_line{list_num}"])
+    for list_index in range(grid_dimensions):
+        # current_square = " "
+        btn = Button(root, width=3, text=" ", command=lambda row=list_num, column=list_index: reveal(row, column))
+        btn.grid(row=list_num, column=list_index)
+        globals()[f"button_grid_line{list_num}"].append(btn)
+
+
+print(button_field)
 root.mainloop()
