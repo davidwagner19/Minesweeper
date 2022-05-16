@@ -6,40 +6,40 @@ root = Tk()
 root.title("Minesweeper")
 root.geometry("500x500")
 
-grid_dimensions = 7
 
-num_squares = grid_dimensions**2
-squares = []
-mines = num_squares // 8
+def create_space_values(dimensions):
+    """Creates the values that will be placed and hidden in the minefield."""
+    num_spaces = dimensions ** 2
+    values = []
+    mines = num_spaces // 8
+    for mine in range(mines):
+        values.append("x")
+    while len(values) < num_spaces:
+        values.append(0)
+    # shuffle and return the list to the main program
+    random.shuffle(values)
 
-for mine in range(mines):
-    squares.append("x")
-while len(squares) < num_squares:
-    squares.append(0)
-
-random.shuffle(squares)
-
-reveal_field = []
-minefield = []
-# button_field = []
-for list_num in range(grid_dimensions):
-    # reveal field
-    globals()[f"hidden_grid_line{list_num}"] = []
-    reveal_field.append(globals()[f"hidden_grid_line{list_num}"])
-    # minefield
-    globals()[f"minefield_grid_line{list_num}"] = []
-    minefield.append(globals()[f"minefield_grid_line{list_num}"])
-
-    for list_index in range(grid_dimensions):
-        # reveal field
-        globals()[f"hidden_grid_line{list_num}"].append(False)
+    minefield_values = []
+    for minefield_list_num in range(dimensions):
         # minefield
-        x = squares.pop()
-        globals()[f"minefield_grid_line{list_num}"].append(x)
+        globals()[f"minefield_grid_line{minefield_list_num}"] = []
+        minefield_values.append(globals()[f"minefield_grid_line{minefield_list_num}"])
+
+        for minefield_list_index in range(dimensions):
+            # minefield
+            x = values.pop()
+            globals()[f"minefield_grid_line{minefield_list_num}"].append(x)
+    return minefield_values
 
 
+grid_dimensions = 5
+minefield = create_space_values(grid_dimensions)
 print(minefield)
 
+
+# ----------------------------------------------------------------------
+# CHECK FOR MINES
+# ----------------------------------------------------------------------
 for list_num in range(grid_dimensions):
     for list_index in range(grid_dimensions):
         if minefield[list_num][list_index] == "x":
@@ -170,14 +170,9 @@ def reveal(row, column):
     """Reveal the hidden value of the space."""
     global button_field
     global minefield
-
-    # reveal_field[revealed_list_num][revealed_list_index] = True
-    # btn["text"] = "Clicked"
     button_field[row][column]["text"] = str(minefield[row][column])
 
 
-# TODO
-# Need to find a way to re-reference the buttons after they've been placed onto the grid
 button_field = []
 for list_num in range(grid_dimensions):
     # button field
@@ -190,5 +185,5 @@ for list_num in range(grid_dimensions):
         globals()[f"button_grid_line{list_num}"].append(btn)
 
 
-print(button_field)
+# print(button_field)
 root.mainloop()
