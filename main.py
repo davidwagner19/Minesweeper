@@ -165,29 +165,40 @@ def create_space_values(dimensions):
     return minefield_values
 
 
-grid_dimensions = 5
-minefield = create_space_values(grid_dimensions)
-print(minefield)
+def create_buttons(dimensions):
+    buttons = []
+    for btn_list_num in range(dimensions):
+        # button field
+        globals()[f"button_grid_line{btn_list_num}"] = []
+        buttons.append(globals()[f"button_grid_line{btn_list_num}"])
+        for btn_list_index in range(dimensions):
+            # current_square = " "
+            btn = Button(root, width=3, text=" ",
+                         command=lambda row=btn_list_num, column=btn_list_index: reveal_space(row, column))
+            btn.grid(row=btn_list_num, column=btn_list_index)
+            globals()[f"button_grid_line{btn_list_num}"].append(btn)
+    return buttons
 
 
-def reveal(row, column):
+def reveal_space(row, column):
     """Reveal the hidden value of the space."""
     global button_field
     global minefield
-    button_field[row][column]["text"] = str(minefield[row][column])
+    colors = ['blue', 'green', 'red', 'blue4', 'chocolate4', 'cyan3', 'black', 'gray']
+    reveal = minefield[row][column]
+    if reveal != "x":
+        button_field[row][column].config(fg=colors[reveal])
+    else:
+        button_field[row][column].config(bg="red")
+    
+    button_field[row][column].config(text=str(reveal))
 
 
-button_field = []
-for list_num in range(grid_dimensions):
-    # button field
-    globals()[f"button_grid_line{list_num}"] = []
-    button_field.append(globals()[f"button_grid_line{list_num}"])
-    for list_index in range(grid_dimensions):
-        # current_square = " "
-        btn = Button(root, width=3, text=" ", command=lambda row=list_num, column=list_index: reveal(row, column))
-        btn.grid(row=list_num, column=list_index)
-        globals()[f"button_grid_line{list_num}"].append(btn)
 
+grid_dimensions = 5
+minefield = create_space_values(grid_dimensions)
+button_field = create_buttons(grid_dimensions)
 
+print(minefield)
 # print(button_field)
 root.mainloop()
