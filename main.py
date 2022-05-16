@@ -181,6 +181,7 @@ def create_buttons(dimensions):
 
 
 def reveal_space(row, column):
+    # TODO: when a mine is revealed, end the game.
     """Reveal the hidden value of the space."""
     global button_field
     global minefield
@@ -190,15 +191,21 @@ def reveal_space(row, column):
         button_field[row][column].config(fg=colors[reveal])
     else:
         button_field[row][column].config(bg="red")
-    
     button_field[row][column].config(text=str(reveal))
+
+
+# TODO: if a mine is revealed or the user quits, reveal all spaces.
+def reveal_all(dimensions):
+    for row in range(dimensions):
+        for column in range(dimensions):
+            reveal_space(row, column)
 
 
 
 grid_dimensions = 5
 minefield = create_space_values(grid_dimensions)
 button_field = create_buttons(grid_dimensions)
-
+reveal_all(grid_dimensions)
 print(minefield)
 # print(button_field)
 root.mainloop()
