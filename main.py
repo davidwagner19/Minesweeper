@@ -7,6 +7,138 @@ root.title("Minesweeper")
 root.geometry("500x500")
 
 
+def check_for_mines(grid):
+    """Looks for mines (marked as "x") and ups the value of any non-mine spaces adjacent to them by +1."""
+    # ----------------------------------------------------------------------
+    # CHECK FOR MINES
+    # ----------------------------------------------------------------------
+    for row_num in range(len(grid)):
+        for col_index in range(len(grid)):
+            if grid[row_num][col_index] == "x":
+
+                # ----------------------------------------------------------------------
+                # VERTICAL CHECKS
+                # ----------------------------------------------------------------------
+                # if a mine is found on the first row
+                if row_num == 0:
+                    # If it's the top row, it's the first row.
+                    # No need to check for an earlier row_num
+                    # +-------+  <- avoid checking this row
+                    # + x 1 0 +
+                    # + 1 0 0 +
+                    # + 0 0 0 +
+                    # +-------+
+                    # checks directly below mine.
+                    if grid[row_num + 1][col_index] != "x":
+                        grid[row_num + 1][col_index] += 1
+
+                    # checks down and to the right if the mine is the first item of the row
+                    if col_index == 0 and grid[row_num + 1][col_index + 1] != "x":
+                        grid[row_num + 1][col_index + 1] += 1
+                    # checks down and to the left if the mine is the last item of the row
+                    elif col_index == len(grid[row_num]) - 1 and grid[row_num + 1][col_index - 1] != "x":
+                        grid[row_num + 1][col_index - 1] += 1
+                    # checks all other diagonal spots that are the next row down
+                    else:
+                        try:
+                            if grid[row_num + 1][col_index + 1] != "x":
+                                grid[row_num + 1][col_index + 1] += 1
+                        except IndexError:
+                            print("outside the bounds of the grid")
+                        finally:
+                            pass
+                        if grid[row_num + 1][col_index - 1] != "x":
+                            grid[row_num + 1][col_index - 1] += 1
+
+                # If a mine has been found on the last (bottom) row
+                elif row_num == len(grid) - 1:
+                    # If it's the bottom row, it's the last row.
+                    # No need to check for a later row_num
+                    # +-------+
+                    # + 0 0 0 +
+                    # + 1 0 0 +
+                    # + x 1 0 +
+                    # +-------+  <- avoid checking this row
+                    # checks directly above the mine
+                    if grid[row_num - 1][col_index] != "x":
+                        grid[row_num - 1][col_index] += 1
+
+                    # checks up and to the right if the mine is the first item of the row
+                    if col_index == 0 and grid[row_num - 1][col_index + 1] != "x":
+                        grid[row_num - 1][col_index + 1] += 1
+                    # checks up and to the left if the mine is the last item of the row
+                    elif col_index == len(grid[row_num]) - 1 and grid[row_num - 1][col_index - 1] != "x":
+                        grid[row_num - 1][col_index - 1] += 1
+                    # checks all other diagonal spots that are the next row up
+                    else:
+                        try:
+                            if grid[row_num - 1][col_index + 1] != "x":
+                                grid[row_num - 1][col_index + 1] += 1
+                        except IndexError:
+                            print("outside the bounds of the grid")
+                        finally:
+                            pass
+                        if grid[row_num - 1][col_index - 1] != "x":
+                            grid[row_num - 1][col_index - 1] += 1
+
+                # if a mine is found on any other row
+                else:
+                    # checks directly below mine.
+                    if grid[row_num + 1][col_index] != "x":
+                        grid[row_num + 1][col_index] += 1
+                    # checks directly above mine.
+                    if grid[row_num - 1][col_index] != "x":
+                        grid[row_num - 1][col_index] += 1
+
+                    # checks diagonal spaces below mine
+                    if col_index == 0 and grid[row_num + 1][col_index + 1] != "x":
+                        grid[row_num + 1][col_index + 1] += 1
+                    elif col_index == len(grid[row_num]) - 1 and grid[row_num + 1][col_index - 1] != "x":
+                        grid[row_num + 1][col_index - 1] += 1
+                    else:
+                        try:
+                            if grid[row_num + 1][col_index + 1] != "x":
+                                grid[row_num + 1][col_index + 1] += 1
+                        except IndexError:
+                            print("outside the bounds of the grid")
+                        finally:
+                            pass
+                        if grid[row_num + 1][col_index - 1] != "x":
+                            grid[row_num + 1][col_index - 1] += 1
+
+                    # checks diagonal spaces above mine
+                    if col_index == 0 and grid[row_num - 1][col_index + 1] != "x":
+                        grid[row_num - 1][col_index + 1] += 1
+                    elif col_index == len(grid[row_num]) - 1 and grid[row_num - 1][col_index - 1] != "x":
+                        grid[row_num - 1][col_index - 1] += 1
+                    else:
+                        try:
+                            if grid[row_num - 1][col_index + 1] != "x":
+                                grid[row_num - 1][col_index + 1] += 1
+                        except IndexError:
+                            print("outside the bounds of the grid")
+                        finally:
+                            pass
+                        if grid[row_num - 1][col_index - 1] != "x":
+                            grid[row_num - 1][col_index - 1] += 1
+
+                # ----------------------------------------------------------------------
+                # HORIZONTAL CHECKS
+                # ----------------------------------------------------------------------
+                if col_index == 0:
+                    if grid[row_num][col_index + 1] != "x":
+                        grid[row_num][col_index + 1] += 1
+                elif col_index == len(grid[row_num]) - 1:
+                    if grid[row_num][col_index - 1] != "x":
+                        grid[row_num][col_index - 1] += 1
+                else:
+                    if grid[row_num][col_index - 1] != "x":
+                        grid[row_num][col_index - 1] += 1
+                    if grid[row_num][col_index + 1] != "x":
+                        grid[row_num][col_index + 1] += 1
+    return grid
+
+
 def create_space_values(dimensions):
     """Creates the values that will be placed and hidden in the minefield."""
     num_spaces = dimensions ** 2
@@ -29,141 +161,13 @@ def create_space_values(dimensions):
             # minefield
             x = values.pop()
             globals()[f"minefield_grid_line{minefield_list_num}"].append(x)
+    minefield_values = check_for_mines(minefield_values)
     return minefield_values
 
 
 grid_dimensions = 5
 minefield = create_space_values(grid_dimensions)
 print(minefield)
-
-
-# ----------------------------------------------------------------------
-# CHECK FOR MINES
-# ----------------------------------------------------------------------
-for list_num in range(grid_dimensions):
-    for list_index in range(grid_dimensions):
-        if minefield[list_num][list_index] == "x":
-
-            # ----------------------------------------------------------------------
-            # VERTICAL CHECKS
-            # ----------------------------------------------------------------------
-            # if a mine is found on the first row
-            if list_num == 0:
-                # If it's the top row, it's the first row.
-                # No need to check for an earlier list_num
-                # +-------+  <- avoid checking this row
-                # + x 1 0 +
-                # + 1 0 0 +
-                # + 0 0 0 +
-                # +-------+
-                # checks directly below mine.
-                if minefield[list_num + 1][list_index] != "x":
-                    minefield[list_num + 1][list_index] += 1
-
-                # checks down and to the right if the mine is the first item of the row
-                if list_index == 0 and minefield[list_num + 1][list_index + 1] != "x":
-                    minefield[list_num + 1][list_index + 1] += 1
-                # checks down and to the left if the mine is the last item of the row
-                elif list_index == len(minefield[list_num]) - 1 and minefield[list_num + 1][list_index - 1] != "x":
-                    minefield[list_num + 1][list_index - 1] += 1
-                # checks all other diagonal spots that are the next row down
-                else:
-                    try:
-                        if minefield[list_num + 1][list_index + 1] != "x":
-                            minefield[list_num + 1][list_index + 1] += 1
-                    except IndexError:
-                        print("outside the bounds of the grid")
-                    finally:
-                        pass
-                    if minefield[list_num + 1][list_index - 1] != "x":
-                        minefield[list_num + 1][list_index - 1] += 1
-
-            # If a mine has been found on the last (bottom) row
-            elif list_num == len(minefield) - 1:
-                # If it's the bottom row, it's the last row.
-                # No need to check for a later list_num
-                # +-------+
-                # + 0 0 0 +
-                # + 1 0 0 +
-                # + x 1 0 +
-                # +-------+  <- avoid checking this row
-                # checks directly above the mine
-                if minefield[list_num - 1][list_index] != "x":
-                    minefield[list_num - 1][list_index] += 1
-
-                # checks up and to the right if the mine is the first item of the row
-                if list_index == 0 and minefield[list_num - 1][list_index + 1] != "x":
-                    minefield[list_num - 1][list_index + 1] += 1
-                # checks up and to the left if the mine is the last item of the row
-                elif list_index == len(minefield[list_num]) - 1 and minefield[list_num - 1][list_index - 1] != "x":
-                    minefield[list_num - 1][list_index - 1] += 1
-                # checks all other diagonal spots that are the next row up
-                else:
-                    try:
-                        if minefield[list_num - 1][list_index + 1] != "x":
-                            minefield[list_num - 1][list_index + 1] += 1
-                    except IndexError:
-                        print("outside the bounds of the grid")
-                    finally:
-                        pass
-                    if minefield[list_num - 1][list_index - 1] != "x":
-                        minefield[list_num - 1][list_index - 1] += 1
-
-            # if a mine is found on any other row
-            else:
-                # checks directly below mine.
-                if minefield[list_num + 1][list_index] != "x":
-                    minefield[list_num + 1][list_index] += 1
-                # checks directly above mine.
-                if minefield[list_num - 1][list_index] != "x":
-                    minefield[list_num - 1][list_index] += 1
-
-                # checks diagonal spaces below mine
-                if list_index == 0 and minefield[list_num + 1][list_index + 1] != "x":
-                    minefield[list_num + 1][list_index + 1] += 1
-                elif list_index == len(minefield[list_num]) - 1 and minefield[list_num + 1][list_index - 1] != "x":
-                    minefield[list_num + 1][list_index - 1] += 1
-                else:
-                    try:
-                        if minefield[list_num + 1][list_index + 1] != "x":
-                            minefield[list_num + 1][list_index + 1] += 1
-                    except IndexError:
-                        print("outside the bounds of the grid")
-                    finally:
-                        pass
-                    if minefield[list_num + 1][list_index - 1] != "x":
-                        minefield[list_num + 1][list_index - 1] += 1
-
-                # checks diagonal spaces above mine
-                if list_index == 0 and minefield[list_num - 1][list_index + 1] != "x":
-                    minefield[list_num - 1][list_index + 1] += 1
-                elif list_index == len(minefield[list_num]) - 1 and minefield[list_num - 1][list_index - 1] != "x":
-                    minefield[list_num - 1][list_index - 1] += 1
-                else:
-                    try:
-                        if minefield[list_num - 1][list_index + 1] != "x":
-                            minefield[list_num - 1][list_index + 1] += 1
-                    except IndexError:
-                        print("outside the bounds of the grid")
-                    finally:
-                        pass
-                    if minefield[list_num - 1][list_index - 1] != "x":
-                        minefield[list_num - 1][list_index - 1] += 1
-
-            # ----------------------------------------------------------------------
-            # HORIZONTAL CHECKS
-            # ----------------------------------------------------------------------
-            if list_index == 0:
-                if minefield[list_num][list_index + 1] != "x":
-                    minefield[list_num][list_index + 1] += 1
-            elif list_index == len(minefield[list_num]) - 1:
-                if minefield[list_num][list_index - 1] != "x":
-                    minefield[list_num][list_index - 1] += 1
-            else:
-                if minefield[list_num][list_index - 1] != "x":
-                    minefield[list_num][list_index - 1] += 1
-                if minefield[list_num][list_index + 1] != "x":
-                    minefield[list_num][list_index + 1] += 1
 
 
 def reveal(row, column):
