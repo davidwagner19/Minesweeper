@@ -139,11 +139,10 @@ def check_for_mines(grid):
     return grid
 
 
-def create_space_values(dimensions):
+def create_values(dimensions, mines):
     """Creates the values that will be placed and hidden in the minefield."""
     num_spaces = dimensions ** 2
     values = []
-    mines = num_spaces // 8
     for mine in range(mines):
         values.append("x")
     while len(values) < num_spaces:
@@ -181,31 +180,39 @@ def create_buttons(dimensions):
 
 
 def reveal_space(row, column):
-    # TODO: when a mine is revealed, end the game.
-    """Reveal the hidden value of the space."""
+    """Reveal the hidden value of the space. Ends the game and reveals the field if a mine has been found"""
     global button_field
     global minefield
+    global continue_game
     colors = ['blue', 'green', 'red', 'blue4', 'chocolate4', 'cyan3', 'black', 'gray']
     reveal = minefield[row][column]
-    if reveal != "x":
-        button_field[row][column].config(fg=colors[reveal])
-    else:
+    if reveal == "x" and continue_game:
         button_field[row][column].config(bg="red")
+        continue_game = False
+        reveal_all(len(minefield))
+    elif reveal == "x":
+        button_field[row][column].config(bg="red")
+    else:
+        button_field[row][column].config(fg=colors[reveal])
     button_field[row][column].config(text=str(reveal))
 
 
-# TODO: if a mine is revealed or the user quits, reveal all spaces.
 def reveal_all(dimensions):
+    """Reveals the values for the entire field."""
     for row in range(dimensions):
         for column in range(dimensions):
             reveal_space(row, column)
 
 
 
+continue_game = True
 grid_dimensions = 5
-minefield = create_space_values(grid_dimensions)
+total_spaces = grid_dimensions ** 2
+num_mines = total_spaces // 8
+minefield = create_values(grid_dimensions, num_mines)
+# button_field is the actual grid of buttons that the values will be hidden behind
 button_field = create_buttons(grid_dimensions)
-reveal_all(grid_dimensions)
+# reveal_all(grid_dimensions)
 print(minefield)
 # print(button_field)
 root.mainloop()
