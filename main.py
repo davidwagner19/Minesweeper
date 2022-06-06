@@ -1,5 +1,6 @@
 # Main Minesweeper program
 from tkinter import *
+import tkinter.messagebox
 import random
 
 root = Tk()
@@ -184,6 +185,8 @@ def reveal_space(row, column):
     global button_field
     global minefield
     global continue_game
+    global points
+    global win_condition
     colors = ['blue', 'green', 'red', 'blue4', 'chocolate4', 'cyan3', 'black', 'gray']
     reveal = minefield[row][column]
     if reveal == "x" and continue_game:
@@ -194,6 +197,11 @@ def reveal_space(row, column):
         button_field[row][column].config(bg="red")
     else:
         button_field[row][column].config(fg=colors[reveal])
+        points += 1
+        if points == win_condition:
+            continue_game = False
+            reveal_all(len(minefield))
+            tkinter.messagebox.showinfo("You Win!!", "You Win!")
     button_field[row][column].config(text=str(reveal))
 
 
@@ -206,9 +214,11 @@ def reveal_all(dimensions):
 
 
 continue_game = True
-grid_dimensions = 5
+points = 0
+grid_dimensions = 7
 total_spaces = grid_dimensions ** 2
 num_mines = total_spaces // 8
+win_condition = total_spaces - num_mines
 minefield = create_values(grid_dimensions, num_mines)
 # button_field is the actual grid of buttons that the values will be hidden behind
 button_field = create_buttons(grid_dimensions)
