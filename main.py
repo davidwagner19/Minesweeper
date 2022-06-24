@@ -8,6 +8,9 @@ root.title("Minesweeper")
 root.geometry("500x500")
 
 
+# TODO - clicking a button should only give 1 point and not more. fix bug where buttons can be repressed
+# TODO - possible bug: right wall button indicated a mine that wasn't there
+
 def check_for_mines(grid):
     """Looks for mines (marked as "x") and ups the value of any non-mine spaces adjacent to them by +1."""
     # ----------------------------------------------------------------------
@@ -186,23 +189,32 @@ def reveal_space(row, column):
     global minefield
     global continue_game
     global points
+    global final_points
     global win_condition
     colors = ['blue', 'green', 'red', 'blue4', 'chocolate4', 'cyan3', 'black', 'gray']
     reveal = minefield[row][column]
     if reveal == "x" and continue_game:
+        final_points = points
+        points = -9000
         button_field[row][column].config(bg="red")
         continue_game = False
         reveal_all(len(minefield))
+        tkinter.messagebox.showinfo("You Lose...", f"You Lose... Final Score: {final_points}/{win_condition}")
     elif reveal == "x":
         button_field[row][column].config(bg="red")
     else:
         button_field[row][column].config(fg=colors[reveal])
         points += 1
-        if points == win_condition:
-            continue_game = False
-            reveal_all(len(minefield))
-            tkinter.messagebox.showinfo("You Win!!", "You Win!")
     button_field[row][column].config(text=str(reveal))
+
+    print("win condition", win_condition)
+    print("points", points)
+    print("final score:", final_points)
+    if points == win_condition:
+        continue_game = False
+        final_points = points
+        reveal_all(len(minefield))
+        tkinter.messagebox.showinfo("You Win!!", f"You Win!!! Final Score: {final_points}/{win_condition}")
 
 
 def reveal_all(dimensions):
@@ -215,7 +227,8 @@ def reveal_all(dimensions):
 
 continue_game = True
 points = 0
-grid_dimensions = 7
+final_points = 0
+grid_dimensions = 6
 total_spaces = grid_dimensions ** 2
 num_mines = total_spaces // 8
 win_condition = total_spaces - num_mines
